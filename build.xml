@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="HelloWorld" basedir="." default="main">
+	<!-- 源JAVA文件的路径 -->
+	<property name="src.dir" value="${basedir}/src" />
+	<!-- JAR包存放的路径 -->
+	<property name="lib.dir" value="${basedir}/WebRoot/WEB-INF/lib" />
+	<!-- JAR包存放的路径 -->
+	<property name="build.dir" value="${basedir}/build" />
+	<!-- CLASS文件存放的路径 -->
+	<property name="classes.dir" value="${build.dir}/classes" />
+	<property name="target.dir" value="${build.dir}/target" />
+	<property name="jar.name" value="authentication" />
+	<property name="jar.version" value="v3.0.0" />
+
+	<!-- 清理生成CLASS文件和JAR包的文件夹 -->
+	<target name="clean">
+		<delete dir="${build.dir}" />
+	</target>
+
+	<!-- 程序用到的第三方JAR包 -->
+	<path id="lib.classpath">
+		<fileset dir="${lib.dir}">
+			<include name="/*.jar" />
+		</fileset>
+	</path>
+
+	<!-- 将JAVA文件编译成CLASS文件，并存放到指定目录build-lib/classes中 -->
+	<target name="compile" depends="clean">
+		<mkdir dir="${classes.dir}" />
+		<javac srcdir="${src.dir}" destdir="${classes.dir}">
+			<classpath refid="lib.classpath" />
+		</javac>
+	</target>
+
+	<!-- 将目录build-lib/classes中的CLASS文件打成JAR包 -->
+	<target name="jar" depends="compile">
+		<mkdir dir="${build.dir}" />
+		<mkdir dir="${build.dir}/lib" />
+		<!-- 存放部分class文件 -->
+		<mkdir dir="${target.dir}" />
+
+		<!-- 将需要打包的class拷贝至target目录 -->
+		<copy todir="${build.dir}/target/com/spg/common/Authentication/">
+			<fileset dir="${build.dir}/classes/com/spg/common/Authentication/">
+			</fileset>
+		</copy>
+
+		<!-- 将第三方JAR包拷相应的目录 -->
+		<copy todir="${build.dir}/lib">
+			<fileset dir="${lib.dir}">
+				<include name="/*.jar" />
+			</fileset>
+		</copy>
+
+		<!-- 将所需的mybatis映射文件拷贝到相应目录 -->
+		<copy todir="${build.dir}/target/com/spg/common/Authentication/mybatis">
+			<fileset dir="${src.dir}/com/spg/common/Authentication/mybatis">
+				<include name="/*.xml" />
+			</fileset>
+		</copy>
+
+		<!-- 打jar包 -->
+		<jar destfile="${build.dir}/${jar.name}-${jar.version}.jar"
+			basedir="${target.dir}">
+			<!--<zipfileset src="E:\eastcom_workspace\Jar\lib\jdom.jar"/> 把第三方JAR包打进JAR包里面，运行JAR包时会用到 -->
+		</jar>
+	</target>
+
+	<!-- 把生成的CLASS文件删除 -->
+	<target name="clean.build">
+		<delete dir="${classes.dir}" />
+		<delete dir="${build.dir}/lib" />
+		<delete dir="${build.dir}/target" />
+	</target>
+
+	<target name="main" depends="jar, clean.build" />
+
+</project>
