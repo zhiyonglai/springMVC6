@@ -27,7 +27,7 @@
 	<!-- 将JAVA文件编译成CLASS文件，并存放到指定目录build-lib/classes中 -->
 	<target name="compile" depends="clean">
 		<mkdir dir="${classes.dir}" />
-		<javac srcdir="${src.dir}" destdir="${classes.dir}">
+		<javac srcdir="${src.dir}" destdir="${classes.dir}" includeAntRuntime="false">
 			<classpath refid="lib.classpath" />
 		</javac>
 	</target>
